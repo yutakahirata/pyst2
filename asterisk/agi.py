@@ -105,8 +105,8 @@ class AGI:
     def _get_agi_env(self):
         while 1:
             line = self.stdin.readline().strip()
-            if PY3:
-                if type(line) is bytes: line = line.decode('utf8')
+            #if PY3:
+            #    if type(line) is bytes: line = line.decode('utf8')
             self.stderr.write('ENV LINE: ')
             self.stderr.write(line)
             self.stderr.write('\n')
@@ -128,10 +128,11 @@ class AGI:
           string = str(string)
         if isinstance(string, float):
           string = str(string)
-        if PY3:
-            return ''.join(['"', string, '"'])
-        else:
-            return ''.join(['"', string.encode('utf8', 'ignore'), '"'])
+        return ''.join(['"', string, '"'])
+        #if PY3:
+        #    return ''.join(['"', string, '"'])
+        #else:
+        #    return ''.join(['"', string.encode('utf8', 'ignore'), '"'])
 
     def _handle_sighup(self, signum, frame):
         """Handle the SIGHUP signal"""
@@ -163,10 +164,12 @@ class AGI:
         if command[-1] != '\n':
             command += '\n'
         self.stderr.write('    COMMAND: %s' % command)
-        if PY3:
-            self.stdout.write(command.encode('utf8'))
-        else:
-            self.stdout.write(command)
+        #if PY3:
+        #    self.stdout.write(command.encode('utf8'))
+        #else:
+        #    self.stdout.write(command)
+
+        self.stdout.write(command)
         self.stdout.flush()
 
     def get_result(self, stdin=sys.stdin):
@@ -174,8 +177,8 @@ class AGI:
         code = 0
         result = {'result': ('', '')}
         line = self.stdin.readline().strip()
-        if PY3:
-            if type(line) is bytes: line = line.decode('utf8')
+        #if PY3:
+        #    if type(line) is bytes: line = line.decode('utf8')
         self.stderr.write('    RESULT_LINE: %s\n' % line)
         m = re_code.search(line)
         if m:
@@ -200,13 +203,13 @@ class AGI:
         elif code == 520:
             usage = [line]
             line = self.stdin.readline().strip()
-            if PY3:
-                if type(line) is bytes: line = line.decode('utf8')
+            #if PY3:
+            #    if type(line) is bytes: line = line.decode('utf8')
             while line[:3] != '520':
                 usage.append(line)
                 line = self.stdin.readline().strip()
-                if PY3:
-                    if type(line) is bytes: line = line.decode('utf8')
+                #if PY3:
+                #    if type(line) is bytes: line = line.decode('utf8')
             usage.append(line)
             usage = '%s\n' % '\n'.join(usage)
             raise AGIUsageError(usage)
